@@ -41,11 +41,15 @@ public function build(string orgName, string imageName, string imageVersion) {
 }
 
 
-public function run(string imageName, string imageVersion, string instanceName, string... dependenciesRef) {
-    employee:EmployeeReference employeeRef = new(dependenciesRef[0]);
-    stock:StockReference stockRef = new(dependenciesRef[1]);
+public function run(string imageName, string imageVersion, string instanceName, map<string> dependenciesRef) {
+    //Resolve employee gateway URL
+    employee:EmployeeReference employeeRef = new(dependenciesRef["employee"] ?: "employee");
     cellery:setParameter(hrComponent.parameters.employeegw_url, employeeRef.getHost());
+
+    //Resolve stock gateway URL
+    stock:StockReference stockRef = new(dependenciesRef["stock"] ?: "stock");
     cellery:setParameter(hrComponent.parameters.stockgw_url, stockRef.getHost());
+
     hrCell.addComponent(hrComponent);
     _ = cellery:createInstance(hrCell, imageName, imageVersion, instanceName);
 }
