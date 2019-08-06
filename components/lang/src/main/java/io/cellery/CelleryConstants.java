@@ -32,7 +32,7 @@ public class CelleryConstants {
     public static final String CELLERY_REPO_PATH =
             System.getProperty("user.home") + File.separator + ".cellery" + File.separator + "repo";
 
-    public static final String IMAGE_SOURCE = "source";
+    public static final String IMAGE_SOURCE = "src";
     public static final String AUTO_SCALING_METRIC_RESOURCE = "Resource";
     public static final String AUTO_SCALING_METRIC_RESOURCE_CPU = "cpu";
     public static final String AUTO_SCALING_METRIC_RESOURCE_MEMORY = "memory";

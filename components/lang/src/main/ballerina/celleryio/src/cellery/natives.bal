@@ -132,7 +132,7 @@ public type Quota record {|
 
 public type Component record {|
     string name;
-    ImageSource | DockerSource source;
+    ImageSource | DockerSource src;
     int replicas = 1;
     map<TCPIngress | HttpApiIngress | GRPCIngress | WebIngress | HttpPortIngress | HttpsPortIngress> ingresses?;
     Label labels?;
@@ -240,7 +240,7 @@ public type Reference record {
 
 public type Test record {|
     string name;
-    ImageSource source;
+    ImageSource src;
     map<Env> envVars?;
 |};
 
@@ -343,6 +343,8 @@ public function constructImage(ImageName iName) returns (Composite | error) {
     return image;
 }
 
+}
+
 # Parse the swagger file and returns API Defintions
 #
 # + swaggerFilePath - The swaggerFilePath
@@ -370,7 +372,7 @@ public function resolveReference(ImageName iName) returns (Reference) {
         panic err;
     }
     Reference myRef = <Reference>ref;
-    foreach var(key,value) in myRef {
+    foreach var[key,value] in myRef {
         string temp = <string> value;
         temp = temp.replaceAll("\\{", "");
         temp = temp.replaceAll("\\}", "");
