@@ -141,7 +141,7 @@ public type Component record {|
     AutoScalingPolicy | ZeroScalingPolicy scalingPolicy?;
     Probes probes?;
     Resources resources?;
-    ComponentType ^"type" = "Deployment";
+    ComponentType 'type = "Deployment";
 |};
 
 public type TCPIngress record {|
@@ -255,7 +255,7 @@ public type TestSuite record {|
 # + return - error
 public function createImage(CellImage | Composite image, ImageName iName) returns ( error?) {
     //Persist the Ballerina cell image record as a json
-    json jsonValue = check json.stamp(image.clone());
+    json jsonValue =  check json.constructFrom(image.clone());
     string filePath = "./target/cellery/" + iName.name + "_meta.json";
     var wResult = write(jsonValue, filePath);
     if (wResult is error) {
@@ -271,8 +271,8 @@ public function createImage(CellImage | Composite image, ImageName iName) return
 
 
 function validateCell(CellImage image) {
-    foreach var(key,component) in image.components {
-        if (!(component["ingresses"] is ()) && component.ingresses.length() > 1) {
+     image.components.forEach(function (Component component) {
+        if (!(component["ingresses"] is ()) && component?.ingresses.length() > 1) {
             error err = error("component: [" + component.name + "] has more than one ingress");
             panic err;
         } else if (image.kind == "Composite") {
@@ -285,20 +285,20 @@ function validateCell(CellImage image) {
                 panic e;
             }
         }
-        if (!(component["scalingPolicy"] is ()) && (component.scalingPolicy is AutoScalingPolicy)) {
-            AutoScalingPolicy policy = <AutoScalingPolicy> component.scalingPolicy;
-            if ((!(policy.metrics["cpu"] is ()) && (policy.metrics.cpu is Percentage)) &&
-            ((component["resources"] is ()) || component.resources["limits"] is ())) {
+        if (!(component["scalingPolicy"] is ()) && (component?.scalingPolicy is AutoScalingPolicy)) {
+            AutoScalingPolicy policy = <AutoScalingPolicy> component?.scalingPolicy;
+            if ((!(policy.metrics["cpu"] is ()) && (policy.metrics?.cpu is Percentage)) &&
+            ((component["resources"] is ()) || component?.resources["limits"] is ())) {
                 io:println("Warning: cpu percentage is defined without resource limits in component: [" + component.name + "]." +
                 " Scaling may not work due to the missing resource limits.");
             }
-            if ((!(policy.metrics["memory"] is ()) && (policy.metrics.memory is Percentage))
-            && ((component["resources"] is ()) || component.resources["limits"] is ())) {
+            if ((!(policy.metrics["memory"] is ()) && (policy.metrics?.memory is Percentage))
+            && ((component["resources"] is ()) || component?.resources["limits"] is ())) {
                 io:println("Warning: memory percentage is defined without resource limits in component [" + component.name + "]." +
                 " Scaling may not work due to the missing resource limits.");
             }
         }
-    }
+    });
 }
 
 
@@ -323,27 +323,26 @@ public function createInstance(CellImage | Composite image, ImageName iName, map
 # + return - error or CellImage record
 public function constructCellImage(ImageName iName) returns (CellImage | error) {
     string filePath = config:getAsString("CELLERY_IMAGE_DIR") + "/artifacts/cellery/" + iName.name + "_meta.json";
-    var rResult = read(filePath);
+    json|error rResult = read(filePath);
     if (rResult is error) {
         log:printError("Error occurred while constructing reading cell image from json: " + iName.name, err = rResult);
         return rResult;
     }
-    CellImage | error image = CellImage.stamp(rResult);
+    CellImage | error image = CellImage.constructFrom(<json>rResult);
     return image;
 }
 
 public function constructImage(ImageName iName) returns (Composite | error) {
     string filePath = config:getAsString("CELLERY_IMAGE_DIR") + "/artifacts/cellery/" + iName.name + "_meta.json";
-    var rResult = read(filePath);
+    json|error rResult = read(filePath);
     if (rResult is error) {
-        log:printError("Error occurred while constructing reading cell image from json: " + iName.name, err = rResult);
+        log:printError("Error occurred while constructing composite image from json: " + iName.name, err = rResult);
         return rResult;
     }
-    Composite | error image = Composite.stamp(rResult);
+    Composite | error image = Composite.constructFrom(<json>rResult);
     return image;
 }
 
-}
 
 # Parse the swagger file and returns API Defintions
 #
@@ -368,16 +367,16 @@ public function resolveReference(ImageName iName) returns (Reference) {
         panic ref;
     }
     if (ref is ()) {
-        error err = error("Empty reference retrieved for " + iName.instanceName + "\n");
+        error err = error("Empty reference retrieved for " + <string>iName?.instanceName);
         panic err;
     }
     Reference myRef = <Reference>ref;
-    foreach var[key,value] in myRef {
+    myRef.forEach(function (anydata value) {
         string temp = <string> value;
         temp = temp.replaceAll("\\{", "");
         temp = temp.replaceAll("\\}", "");
         myRef[key] = temp;
-    }
+    });
     return myRef;
 }
 # Returns a Reference record with url information
@@ -387,10 +386,10 @@ public function resolveReference(ImageName iName) returns (Reference) {
 # + return - Reference record
 public function getReference(Component component, string dependencyAlias) returns (Reference) {
     ImageName | string? alias;
-    if (!(component.dependencies["cells"] is ())) {
-        alias = component.dependencies.cells[dependencyAlias];
+    if (!(component?.dependencies["cells"] is ())) {
+        alias = component?.dependencies?.cells[dependencyAlias];
     } else {
-        alias = component.dependencies.composites[dependencyAlias];
+        alias = component?.dependencies?.composites[dependencyAlias];
     }
     ImageName aliasImage;
     if (alias is string) {
@@ -455,7 +454,7 @@ function parseCellDependency(string alias) returns ImageName {
 # + return - hostname
 public function getHost(Component component) returns (string) {
     string host = "{{instance_name}}--" + getValidName(component.name) + "-service";
-    if (!(component["scalingPolicy"] is ()) && component.scalingPolicy is ZeroScalingPolicy) {
+    if (!(component["scalingPolicy"] is ()) && component?.scalingPolicy is ZeroScalingPolicy) {
         host += "-rev";
     }
     return host;
@@ -471,27 +470,27 @@ public function getPort(Component component) returns (int) {
         error err = error("getPort is invoked on a component: [" + component.name + "] with empty ingress");
         panic err;
     }
-    if (component.ingresses.length() > 0) {
-        var ingress = component.ingresses[component.ingresses.keys()[0]];
+    if (component?.ingresses.length() > 0) {
+        var ingress = component?.ingresses[component.ingresses.keys()[0]];
         if (ingress is TCPIngress) {
             TCPIngress ing = <TCPIngress>ingress;
             port = ing.backendPort;
         } else if (ingress is HttpApiIngress) {
-            if (!(component["scalingPolicy"] is ()) && component.scalingPolicy is ZeroScalingPolicy) {
+            if (!(component["scalingPolicy"] is ()) && component?.scalingPolicy is ZeroScalingPolicy) {
                 port = 80;
             } else {
                 HttpApiIngress ing = <HttpApiIngress>ingress;
                 port = ing.port;
             }
         } else if (ingress is GRPCIngress) {
-            if (!(component["scalingPolicy"] is ()) && component.scalingPolicy is ZeroScalingPolicy) {
+            if (!(component["scalingPolicy"] is ()) && component?.scalingPolicy is ZeroScalingPolicy) {
                 port = 81;
             } else {
                 GRPCIngress ing = <GRPCIngress>ingress;
                 port = ing.backendPort;
             }
         } else if (ingress is WebIngress) {
-            if (!(component["scalingPolicy"] is ()) && component.scalingPolicy is ZeroScalingPolicy) {
+            if (!(component["scalingPolicy"] is ()) && component?.scalingPolicy is ZeroScalingPolicy) {
                 port = 80;
             } else {
                 WebIngress ing = <WebIngress>ingress;
@@ -522,28 +521,18 @@ function closeWc(io:WritableCharacterChannel wc) {
     }
 }
 
-function write(json content, string path) returns error? {
-    io:WritableByteChannel wbc = io:openWritableFile(path);
+function write(json content, string path) returns @tainted error? {
+    io:WritableByteChannel wbc = check io:openWritableFile(path);
     io:WritableCharacterChannel wch = new(wbc, "UTF8");
     var result = wch.writeJson(content);
-    if (result is error) {
-        closeWc(wch);
-        return result;
-    } else {
-        closeWc(wch);
-        return result;
-    }
+    closeWc(wch);
+    return result;
 }
 
-function read(string path) returns json | error {
-    io:ReadableByteChannel rbc = io:openReadableFile(path);
+function read(string path) returns @tainted json | error {
+    io:ReadableByteChannel rbc = check io:openReadableFile(path);
     io:ReadableCharacterChannel rch = new(rbc, "UTF8");
     var result = rch.readJson();
-    if (result is error) {
-        closeRc(rch);
-        return result;
-    } else {
-        closeRc(rch);
-        return result;
-    }
+    closeRc(rch);
+    return result;
 }
