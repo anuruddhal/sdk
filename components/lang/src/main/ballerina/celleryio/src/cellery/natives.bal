@@ -374,15 +374,24 @@ public function resolveReference(ImageName iName) returns (Reference) {
     Reference myRef = <Reference>ref;
     myRef.forEach(function (anydata value) {
         string temp = <string> value;
-        temp = temp.replaceAll("\\{", "");
-        temp = temp.replaceAll("\\}", "");
+        temp = replaceAll(temp,"\\{", "");
+        temp = replaceAll(temp,"\\}", "");
         myRef[key] = temp;
     });
     return myRef;
 }
 
-function replace() returns handle = @java:Method {
-    name: "replace",
+public function replaceAll(string str, string regex, string replacement) returns string {
+    handle reg = java:fromString(regex);
+    handle rep = java:fromString(replacement);
+    handle rec = java:fromString(str);
+    handle newStr = jReplaceAll(rec, reg, rep);
+
+    return newStr.toString();
+}
+
+function jReplaceAll(handle receiver, handle regex, handle replacement) returns handle = @java:Method {
+    name: "replaceAll",
     class: "java.lang.String"
 } external;
 
@@ -509,7 +518,8 @@ public function getPort(Component component) returns (int) {
 }
 
 function getValidName(string name) returns string {
-    return name.toLowerAscii().replace("_", "-").replace(".", "-");
+    string temp_name = replaceAll(name.toLowerAscii(),"_", "-");
+    return replaceAll(temp_name,".", "-");
 }
 
 function closeRc(io:ReadableCharacterChannel rc) {
