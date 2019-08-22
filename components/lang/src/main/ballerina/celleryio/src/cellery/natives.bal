@@ -379,7 +379,7 @@ public function resolveReference(ImageName iName) returns (Reference) {
         string temp = <string> value;
         temp = replaceAll(temp,"\\{", "");
         temp = replaceAll(temp,"\\}", "");
-        //TODO: Fix th
+        //TODO: Fix this
         //myRef[key] = temp;
     });
     return myRef;
