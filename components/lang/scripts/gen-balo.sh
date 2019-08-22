@@ -25,8 +25,8 @@ EXECUTABLE="${DISTRIBUTION_PATH}/bin/ballerina"
 echo ${DISTRIBUTION_PATH}
 echo ${CELLERY_MAVEN_PROJECT_ROOT}
 echo ${EXECUTABLE}
-CELLERY_BALLERINA_PROJECT="${CELLERY_MAVEN_PROJECT_ROOT}/src/main/ballerina/cellery"
-BALLERINAX_BIR_CACHE="${DISTRIBUTION_PATH}/bir-cache/ballerinax/"
+CELLERY_BALLERINA_PROJECT="${CELLERY_MAVEN_PROJECT_ROOT}/src/main/ballerina/celleryio"
+BALLERINAX_BIR_CACHE="${DISTRIBUTION_PATH}/bir-cache/celleryio/"
 BALLERINAX_SYSTEM_LIB="${DISTRIBUTION_PATH}/bre/lib/"
 
 mkdir -p ${BALLERINAX_BIR_CACHE}
@@ -44,10 +44,10 @@ else
         ${EXECUTABLE} compile --skip-tests
     popd > /dev/null 2>&1
 fi
-
-cp -r ${CELLERY_BALLERINA_PROJECT}/target/* ${CELLERY_MAVEN_PROJECT_ROOT}/target
-
-cp -r ${CELLERY_MAVEN_PROJECT_ROOT}/target/caches/bir_cache/ballerinax/kubernetes ${BALLERINAX_BIR_CACHE}
-
-cp ${CELLERY_MAVEN_PROJECT_ROOT}/target/caches/jar_cache/ballerinax/kubernetes/0.0.0/kubernetes.jar ${BALLERINAX_SYSTEM_LIB}
-
+#
+#cp -r ${CELLERY_BALLERINA_PROJECT}/target/* ${CELLERY_MAVEN_PROJECT_ROOT}/target
+#
+#cp -r ${CELLERY_MAVEN_PROJECT_ROOT}/target/caches/bir_cache/ballerinax/kubernetes ${BALLERINAX_BIR_CACHE}
+#
+#cp ${CELLERY_MAVEN_PROJECT_ROOT}/target/caches/jar_cache/ballerinax/kubernetes/0.0.0/kubernetes.jar ${BALLERINAX_SYSTEM_LIB}
+#

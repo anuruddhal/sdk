@@ -254,7 +254,7 @@ public type TestSuite record {|
 # + image - The cell/composite image definition
 # + iName - The cell image org, name & version
 # + return - error
-public function createImage(CellImage | Composite image, ImageName iName) returns ( error?) {
+public function createImage(CellImage | Composite image, ImageName iName) returns @untainted ( error?) {
     //Persist the Ballerina cell image record as a json
     json jsonValue =  check json.constructFrom(image.clone());
     string filePath = "./target/cellery/" + iName.name + "_meta.json";
@@ -273,7 +273,10 @@ public function createImage(CellImage | Composite image, ImageName iName) return
 
 function validateCell(CellImage image) {
      image.components.forEach(function (Component component) {
-        if (!(component["ingresses"] is ()) && component.get("ingresses").length() > 1) {
+     map<TCPIngress | HttpApiIngress | GRPCIngress | WebIngress | HttpPortIngress | HttpsPortIngress> ingresses =
+          <map<TCPIngress | HttpApiIngress | GRPCIngress | WebIngress | HttpPortIngress | HttpsPortIngress>>
+          component?.ingresses;
+        if (!(component["ingresses"] is ()) && ingresses.length() > 1) {
             error err = error("component: [" + component.name + "] has more than one ingress");
             panic err;
         } else if (image.kind == "Composite") {
@@ -322,7 +325,7 @@ public function createInstance(CellImage | Composite image, ImageName iName, map
 #
 # + iName - The cell instance name
 # + return - error or CellImage record
-public function constructCellImage(ImageName iName) returns (CellImage | error) {
+public function constructCellImage(ImageName iName) returns @untainted(CellImage | error) {
     string filePath = config:getAsString("CELLERY_IMAGE_DIR") + "/artifacts/cellery/" + iName.name + "_meta.json";
     json|error rResult = read(filePath);
     if (rResult is error) {
@@ -333,7 +336,7 @@ public function constructCellImage(ImageName iName) returns (CellImage | error) 
     return image;
 }
 
-public function constructImage(ImageName iName) returns (Composite | error) {
+public function constructImage(ImageName iName) returns @untainted(Composite | error) {
     string filePath = config:getAsString("CELLERY_IMAGE_DIR") + "/artifacts/cellery/" + iName.name + "_meta.json";
     json|error rResult = read(filePath);
     if (rResult is error) {
@@ -376,7 +379,8 @@ public function resolveReference(ImageName iName) returns (Reference) {
         string temp = <string> value;
         temp = replaceAll(temp,"\\{", "");
         temp = replaceAll(temp,"\\}", "");
-        myRef[key] = temp;
+        //TODO: Fix th
+        //myRef[key] = temp;
     });
     return myRef;
 }
@@ -486,8 +490,10 @@ public function getPort(Component component) returns (int) {
         error err = error("getPort is invoked on a component: [" + component.name + "] with empty ingress");
         panic err;
     }
-    if (component?.ingresses.length() > 0) {
-        var ingress = component?.ingresses[component.get("ingresses").keys()[0]];
+     map<TCPIngress | HttpApiIngress | GRPCIngress | WebIngress | HttpPortIngress | HttpsPortIngress> ingresses =
+     <map<TCPIngress | HttpApiIngress | GRPCIngress | WebIngress | HttpPortIngress | HttpsPortIngress>> component?.ingresses;
+    if (ingresses.length() > 0) {
+        var ingress = ingresses[ingresses.keys()[0]];
         if (ingress is TCPIngress) {
             TCPIngress ing = <TCPIngress>ingress;
             port = ing.backendPort;
