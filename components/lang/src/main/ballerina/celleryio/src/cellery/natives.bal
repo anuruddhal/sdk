@@ -16,6 +16,7 @@
 import ballerina/log;
 import ballerina/io;
 import ballerina/config;
+import ballerinax/java;
 
 public type ImageName record {|
     string org;
@@ -272,7 +273,7 @@ public function createImage(CellImage | Composite image, ImageName iName) return
 
 function validateCell(CellImage image) {
      image.components.forEach(function (Component component) {
-        if (!(component["ingresses"] is ()) && component?.ingresses.length() > 1) {
+        if (!(component["ingresses"] is ()) && component.get("ingresses").length() > 1) {
             error err = error("component: [" + component.name + "] has more than one ingress");
             panic err;
         } else if (image.kind == "Composite") {
@@ -379,6 +380,12 @@ public function resolveReference(ImageName iName) returns (Reference) {
     });
     return myRef;
 }
+
+function replace() returns handle = @java:Method {
+    name: "replace",
+    class: "java.lang.String"
+} external;
+
 # Returns a Reference record with url information
 #
 # + component - Component
@@ -437,9 +444,9 @@ public function runTestSuite(ImageName iName, TestSuite testSuite) returns ( err
 public function stopInstances(ImageName iName, ImageName[] instances) returns ( error?) = external;
 
 function parseCellDependency(string alias) returns ImageName {
-    string org = alias.substring(0, alias.indexOf("/"));
-    string name = alias.substring(alias.indexOf("/") + 1, alias.indexOf(":"));
-    string ver = alias.substring(alias.indexOf(":") + 1, alias.length());
+    string org = alias.substring(0, <int>alias.indexOf("/"));
+    string name = alias.substring(<int>alias.indexOf("/") + 1, <int>alias.indexOf(":"));
+    string ver = alias.substring(<int>alias.indexOf(":") + 1, <int>alias.length());
     ImageName imageName = {
         name: name,
         org: org,
@@ -471,7 +478,7 @@ public function getPort(Component component) returns (int) {
         panic err;
     }
     if (component?.ingresses.length() > 0) {
-        var ingress = component?.ingresses[component.ingresses.keys()[0]];
+        var ingress = component?.ingresses[component.get("ingresses").keys()[0]];
         if (ingress is TCPIngress) {
             TCPIngress ing = <TCPIngress>ingress;
             port = ing.backendPort;
@@ -502,7 +509,7 @@ public function getPort(Component component) returns (int) {
 }
 
 function getValidName(string name) returns string {
-    return name.toLower().replace("_", "-").replace(".", "-");
+    return name.toLowerAscii().replace("_", "-").replace(".", "-");
 }
 
 function closeRc(io:ReadableCharacterChannel rc) {
