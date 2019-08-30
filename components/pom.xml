@@ -291,7 +291,8 @@
     </properties>
 
     <modules>
-        <module>lang</module>
-        <module>cellery-component-test</module>
+        <module>module-cellery</module>
+<!--        <module>lang</module>-->
+<!--        <module>cellery-component-test</module>-->
     </modules>
 </project>
