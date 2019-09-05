@@ -16,7 +16,14 @@ target = "java8"
 
   [[platform.libraries]]
   module = "json"
-  path = "./cellery-utils/target/classes/lib/json-20190722.jar"
-  artafactId = "javax.jms-api"
-  version = "2.0.1"
-  groupId = "javax.jms"
+  path = "./cellery-utils/target/classes/lib/json-20180813.jar"
+  artafactId = "json"
+  version = "20180813"
+  groupId = "org.json"
+
+  [[platform.libraries]]
+  module = "kubernetes-client"
+  path = "./cellery-utils/target/classes/lib/kubernetes-client-4.3.0.jar"
+  artafactId = "kubernetes-client"
+  version = "4.3.0"
+  groupId = "io.fabric8"

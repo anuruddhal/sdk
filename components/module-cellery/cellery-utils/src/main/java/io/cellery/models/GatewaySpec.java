@@ -21,7 +21,7 @@ package io.cellery.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Singular;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;

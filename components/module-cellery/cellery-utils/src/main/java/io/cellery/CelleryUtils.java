@@ -89,7 +89,7 @@ public class CelleryUtils {
      * @return swagger file as a String
      * @throws IOException if unable to read file
      */
-    public static String readSwaggerFile(String path, Charset encoding) throws IOException {
+    public static String readSwagger(String path, Charset encoding) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);
     }

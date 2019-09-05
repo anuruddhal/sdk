@@ -446,3 +446,11 @@ function read(string path) returns @tainted json | error {
 public function createCellImage(CellImage image,ImageName imageName) returns error? = @java:Method {
     class:"io.cellery.impl.CreateCellImage"
 } external;
+
+# Parse the swagger file and returns API Defintions
+#
+# + swaggerFilePath - The swaggerFilePath
+# + return - Array of ApiDefinitions
+public function readSwaggerFile(string swaggerFilePath) returns (handle|error?) = @java:Method {
+    class:"io.cellery.impl.ReadSwaggerFile"
+} external;

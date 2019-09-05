@@ -16,7 +16,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>io.ballerina</groupId>
@@ -273,7 +273,7 @@
     </scm>
 
     <properties>
-        <ballerina.lang.version>0.992.0-m2-SNAPSHOT</ballerina.lang.version>
+        <ballerina.lang.version>1.0.0-alpha3</ballerina.lang.version>
         <ballerina.source.directory>${project.build.directory}/../src/main/ballerina</ballerina.source.directory>
         <com.fasterxml.jackson.core.annotations.version>2.9.8</com.fasterxml.jackson.core.annotations.version>
         <com.fasterxml.jackson.dataformat.yaml.version>2.9.8</com.fasterxml.jackson.dataformat.yaml.version>
@@ -292,7 +292,7 @@
 
     <modules>
         <module>module-cellery</module>
-<!--        <module>lang</module>-->
-<!--        <module>cellery-component-test</module>-->
+        <!--        <module>lang</module>-->
+        <!--        <module>cellery-component-test</module>-->
     </modules>
 </project>
