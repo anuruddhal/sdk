@@ -27,3 +27,24 @@ target = "java8"
   artafactId = "kubernetes-client"
   version = "4.3.0"
   groupId = "io.fabric8"
+
+  [[platform.libraries]]
+  module = "docker"
+  path = "./cellery-utils/target/classes/lib/docker-generator-1.0.0-alpha3.jar"
+  artafactId = "docker-generator"
+  version = "1.0.0-alpha3"
+  groupId = "org.ballerinax.docker"
+
+  [[platform.libraries]]
+  module = "commons-lang3"
+  path = "./cellery-utils/target/classes/lib/commons-lang3-3.8.jar"
+  artafactId = "commons-lang3"
+  version = "3.8"
+  groupId = "org.apache.commons"
+
+  [[platform.libraries]]
+  module = "commons-lang"
+  path = "./cellery-utils/target/classes/lib/commons-lang-2.6.jar"
+  artafactId = "commons-lang"
+  version = "2.6"
+  groupId = "commons-lang"
