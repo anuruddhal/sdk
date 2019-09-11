@@ -20,9 +20,12 @@ package io.cellery.impl;
 import io.cellery.BallerinaCelleryException;
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
+import org.ballerinalang.jvm.BallerinaErrors;
+import org.ballerinalang.jvm.BallerinaValues;
+import org.ballerinalang.jvm.types.BArrayType;
+import org.ballerinalang.jvm.types.BPackage;
 import org.ballerinalang.jvm.values.ArrayValue;
 import org.ballerinalang.jvm.values.MapValue;
-import org.ballerinalang.jvm.values.MapValueImpl;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -36,13 +39,13 @@ import static io.cellery.CelleryUtils.readSwagger;
  */
 public class ReadSwaggerFile {
 
-    public static MapValue readSwaggerFile(String swaggerFilePath) throws BallerinaCelleryException {
-        final String specification;
+    public static MapValue readSwaggerFile(String swaggerFilePath, MapValue apiDef) {
+        String specification = "";
         try {
             specification = readSwagger(swaggerFilePath, Charset.defaultCharset());
             copyResourceToTarget(swaggerFilePath);
         } catch (IOException e) {
-            throw new BallerinaCelleryException(e.getMessage());
+            throw BallerinaErrors.createInteropError(new BallerinaCelleryException(e.getMessage()));
         }
         final Swagger swagger = new SwaggerParser().parse(specification);
         String basePath = swagger.getBasePath();
@@ -51,11 +54,14 @@ public class ReadSwaggerFile {
         }
         AtomicLong runCount = new AtomicLong(0L);
         String finalBasePath = basePath;
-        ArrayValue arrayValue = new ArrayValue();
-        MapValue<String, ArrayValue> apiDefinitions = new MapValueImpl<>();
+        ArrayValue arrayValue = new ArrayValue(new BArrayType(BallerinaValues.createRecordValue(new BPackage(
+                "celleryio", "cellery", "0.3.1"), "ResourceDefinition").getType()));
+        MapValue<String, Object> apiDefinitions = BallerinaValues.createRecordValue(new BPackage("celleryio",
+                "cellery", "0.3.1"), "ApiDefinition");
         swagger.getPaths().forEach((path, pathDefinition) ->
                 pathDefinition.getOperationMap().forEach((httpMethod, operation) -> {
-                    MapValue<String, String> resource = new MapValueImpl<>();
+                    MapValue<String, Object> resource = BallerinaValues.createRecordValue(new BPackage("celleryio",
+                            "cellery", "0.3.1"), "ResourceDefinition");
                     resource.put("path", finalBasePath + path);
                     resource.put("method", httpMethod.toString());
                     arrayValue.add(runCount.getAndIncrement(), resource);

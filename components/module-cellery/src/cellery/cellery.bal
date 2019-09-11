@@ -451,6 +451,15 @@ public function createCellImage(CellImage image,ImageName imageName) returns err
 #
 # + swaggerFilePath - The swaggerFilePath
 # + return - Array of ApiDefinitions
-public function readSwaggerFile(string swaggerFilePath) returns (handle|error?) = @java:Method {
+public function readSwaggerFile(string swaggerFilePath, ApiDefinition apiDef) returns ApiDefinition | error {
+    return trap readSwaggerFile1(swaggerFilePath,)
+}
+
+
+# Parse the swagger file and returns API Defintions
+#
+# + swaggerFilePath - The swaggerFilePath
+# + return - Array of ApiDefinitions
+function readSwaggerFile1(string swaggerFilePath, ApiDefinition apiDef) returns ApiDefinition = @java:Method {
     class:"io.cellery.impl.ReadSwaggerFile"
 } external;

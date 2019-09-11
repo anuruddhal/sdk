@@ -375,6 +375,12 @@ public function resolveReference(ImageName iName) returns (Reference) {
         panic err;
     }
     Reference myRef = <Reference>ref;
+    foreach var (k, v) in myRef {
+     string temp = <string> value;
+            temp = replaceAll(temp,"\\{", "");
+            temp = replaceAll(temp,"\\}", "");
+            myRef[k] = temp;
+    }
     myRef.forEach(function (anydata value) {
         string temp = <string> value;
         temp = replaceAll(temp,"\\{", "");

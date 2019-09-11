@@ -273,14 +273,13 @@
     </scm>
 
     <properties>
-        <ballerina.lang.version>1.0.0-alpha3</ballerina.lang.version>
+        <ballerina.lang.version>0.991.0</ballerina.lang.version>
         <ballerina.source.directory>${project.build.directory}/../src/main/ballerina</ballerina.source.directory>
         <com.fasterxml.jackson.core.annotations.version>2.9.8</com.fasterxml.jackson.core.annotations.version>
         <com.fasterxml.jackson.dataformat.yaml.version>2.9.8</com.fasterxml.jackson.dataformat.yaml.version>
-        <docker.generator.version>0.991.0</docker.generator.version>
         <fabric8.kubernetes.client.version>4.3.0</fabric8.kubernetes.client.version>
         <jackson.version>2.9.8</jackson.version>
-        <maven.jacoco.plugin.version>0.8.3</maven.jacoco.plugin.version>
+        <maven.jacoco.plugin.version>0.8.3</maven.jacoco.plug`in.version>
         <mvn.processor.plugin.version>2.2.4</mvn.processor.plugin.version>
         <mvn.shade.plugin.version>3.2.1</mvn.shade.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -292,7 +291,7 @@
 
     <modules>
         <module>module-cellery</module>
-        <!--        <module>lang</module>-->
-        <!--        <module>cellery-component-test</module>-->
+                <module>lang</module>
+                <module>cellery-component-test</module>
     </modules>
 </project>

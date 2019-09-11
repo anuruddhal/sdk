@@ -295,7 +295,7 @@
     </repositories>
 
     <properties>
-        <ballerina.version>0.992.0-m2-SNAPSHOT</ballerina.version>
+        <ballerina.version>0.991.0</ballerina.version>
         <lombok.version>1.18.4</lombok.version>
         <fabric8.kubernetes.version>4.3.0</fabric8.kubernetes.version>
         <fabric8.kubernetes.client.version>4.3.0</fabric8.kubernetes.client.version>
